@@ -1,14 +1,13 @@
 import { Stack } from "expo-router";
+import React from "react";
 
-// slot
-// presentation 은 stack만 된다.
-export default function RootLayout() {
+function RootLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name="modal"
-        options={{ presentation: "modal" }}
-      ></Stack.Screen>
+    <Stack>
+      <Stack.Screen name="index" options={{ title: "Home" }}></Stack.Screen>
+      <Stack.Screen name="about" options={{ title: "About" }}></Stack.Screen>
     </Stack>
   );
 }
+
+export default RootLayout;
