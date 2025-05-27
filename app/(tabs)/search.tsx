@@ -2,7 +2,7 @@
 // stack, tab, drawer
 import { Text, View } from "react-native";
 
-export default function Index() {
+export default function Search() {
   return (
     <View
       style={{
@@ -11,7 +11,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen222333.</Text>
+      <Text>Search페이지</Text>
     </View>
   );
 }

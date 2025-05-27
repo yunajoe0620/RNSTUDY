@@ -1,8 +1,6 @@
-// my-app://main
-// stack, tab, drawer
 import { Text, View } from "react-native";
 
-export default function Index() {
+export default function Activity() {
   return (
     <View
       style={{
@@ -11,7 +9,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen222333.</Text>
+      <Text>액티비티 페이지</Text>
     </View>
   );
 }

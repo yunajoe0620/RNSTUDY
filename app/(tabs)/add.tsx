@@ -11,7 +11,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen222333.</Text>
+      <Text>ADD페이지</Text>
     </View>
   );
 }
