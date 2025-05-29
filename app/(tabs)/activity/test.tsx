@@ -2,7 +2,7 @@ import React from "react";
 import { Text } from "react-native";
 
 function Index() {
-  return <Text>리플라이즈 페이쥐입니다</Text>;
+  return <Text>테수투 입니다</Text>;
 }
 
 export default Index;
