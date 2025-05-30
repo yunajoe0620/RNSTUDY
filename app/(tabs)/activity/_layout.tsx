@@ -1,8 +1,20 @@
-import { Slot } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 
-function Activity() {
-  return <Slot></Slot>;
+function ActivityLayOut() {
+  return (
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#f4511e",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    ></Stack>
+  );
 }
 
-export default Activity;
+export default ActivityLayOut;

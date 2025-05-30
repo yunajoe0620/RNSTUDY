@@ -1,15 +1,36 @@
 import NotFoundPage from "@/app/+not-found";
-import { usePathname, useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Link, Stack, usePathname, useRouter } from "expo-router";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+function LogoTitle(props: any) {
+  return (
+    <View
+      style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+    >
+      <Image
+        style={styles.image}
+        source={{ uri: "https://reactnative.dev/img/tiny_logo.png" }}
+      />
+      <Text>{props.children}</Text>
+    </View>
+  );
+}
 
 export default function Activity() {
   const router = useRouter();
-  // 현재 표시되고 있는 페이지의 url를 보여준다
-  //  /activity,  /activity/replies
+
   const pathname = usePathname();
-  console.log("pathname", pathname);
-  if (!["/activity", "/activity/follows"].includes(pathname)) {
-    return <NotFoundPage></NotFoundPage>;
+  if (
+    ![
+      "/activity",
+      "/activity/follows",
+      "/activity/replies",
+      "/activity/mentions",
+      "/activity/quotes",
+      "/activity/reposts",
+    ].includes(pathname)
+  ) {
+    return <NotFoundPage />;
   }
   return (
     <View
@@ -49,6 +70,31 @@ export default function Activity() {
           <Text>reposts</Text>
         </TouchableOpacity>
       </View>
+      <Stack.Screen
+        options={{
+          title: "Home",
+          headerStyle: { backgroundColor: "#f4511e" },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+          headerTitle: (props) => <LogoTitle {...props} />,
+        }}
+      ></Stack.Screen>
+      <Link href={{ pathname: "/search", params: { name: "Bacon", age: 100 } }}>
+        Go to Details
+      </Link>
     </View>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  image: {
+    width: 50,
+    height: 50,
+  },
+});
