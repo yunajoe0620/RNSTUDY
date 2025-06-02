@@ -6,6 +6,19 @@ export default function TabLayout() {
   return (
     <Tabs screenOptions={{ headerShown: false }}>
       <Tabs.Screen
+        name="(home)"
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="home"
+              size={24}
+              color={focused ? "black" : "gray"}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
           // 아이콘 아래에 title 안보이게 함
