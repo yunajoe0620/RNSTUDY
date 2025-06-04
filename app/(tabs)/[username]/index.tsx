@@ -1,11 +1,17 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  usePathname,
+} from "expo-router";
 import React from "react";
 import { View } from "react-native";
 
 function Index() {
-  const router = useRouter();
-  const result = useLocalSearchParams();
-  console.log("result", result);
+  const glob = useGlobalSearchParams();
+  const local = useLocalSearchParams();
+  const path = usePathname();
+
+  console.log("Local:", local.user, "Global:", glob.user, "pathName", path);
 
   return (
     <View
@@ -17,17 +23,17 @@ function Index() {
     >
       {/* <View>
         <TouchableOpacity onPress={() => router.push(`/${username}`)}>
-          <Text>묭아사랑해222</Text>
+          <Text>묭아사랑해</Text>
         </TouchableOpacity>
       </View>
       <View>
         <TouchableOpacity onPress={() => router.push(`/${username}/replies`)}>
-          <Text>하늘만쿰사탕해2222</Text>
+          <Text>하늘만쿰사탕해</Text>
         </TouchableOpacity>
       </View>
       <View>
         <TouchableOpacity onPress={() => router.push(`/${username}/reposts`)}>
-          <Text>쪽22222</Text>
+          <Text>쪽</Text>
         </TouchableOpacity>
       </View> */}
     </View>
