@@ -17,7 +17,7 @@ export default function TabLayout() {
 
   return (
     <>
-      <Tabs screenOptions={{ headerShown: false }}>
+      <Tabs backBehavior="history" screenOptions={{ headerShown: false }}>
         <Tabs.Screen
           name="(home)"
           options={{

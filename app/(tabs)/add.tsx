@@ -1,5 +1,3 @@
-// my-app://main
-// stack, tab, drawer
 import { Text, View } from "react-native";
 
 export default function Index() {
