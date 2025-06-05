@@ -1,8 +1,9 @@
-// my-app://main
-// stack, tab, drawer
+import { usePathname } from "expo-router";
 import { Text, View } from "react-native";
 
 export default function Search() {
+  const pathname = usePathname();
+  console.log("패스네임 ===>>", pathname);
   return (
     <View
       style={{
