@@ -1,10 +1,11 @@
 // my-app://main
 // stack, tab, drawer
-import { useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <View
@@ -16,12 +17,16 @@ export default function Index() {
     >
       <View>
         <TouchableOpacity onPress={() => router.push(`/`)}>
-          <Text>For Home</Text>
+          <Text style={{ color: pathname === "/" ? "red" : "black" }}>
+            For You
+          </Text>
         </TouchableOpacity>
       </View>
       <View>
         <TouchableOpacity onPress={() => router.push(`/following`)}>
-          <Text>For following</Text>
+          <Text style={{ color: pathname === "/" ? "black" : "red" }}>
+            For following
+          </Text>
         </TouchableOpacity>
       </View>
       <View>

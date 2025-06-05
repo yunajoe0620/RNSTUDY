@@ -6,7 +6,7 @@ import { Modal, Text, TouchableOpacity, View } from "react-native";
 export default function TabLayout() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const router = useRouter();
-  const isLogin = false;
+  const isLogin = true;
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
   };
@@ -17,7 +17,6 @@ export default function TabLayout() {
 
   return (
     <>
-      {" "}
       <Tabs screenOptions={{ headerShown: false }}>
         <Tabs.Screen
           name="(home)"
@@ -84,6 +83,14 @@ export default function TabLayout() {
         />
         <Tabs.Screen
           name="activity"
+          listeners={{
+            tabPress: (e) => {
+              if (!isLogin) {
+                e.preventDefault();
+                openLoginModal();
+              }
+            },
+          }}
           options={{
             tabBarLabel: () => null,
             tabBarIcon: ({ focused }) => (
@@ -97,6 +104,14 @@ export default function TabLayout() {
         />
         <Tabs.Screen
           name="[username]"
+          listeners={{
+            tabPress: (e) => {
+              if (!isLogin) {
+                e.preventDefault();
+                openLoginModal();
+              }
+            },
+          }}
           options={{
             tabBarLabel: () => null,
             tabBarIcon: ({ focused }) => (
@@ -108,6 +123,13 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="(post)/[username]/post/[postID]"
+          options={{
+            tabBarLabel: () => null,
+            href: null,
+          }}
+        />
       </Tabs>
       <Modal visible={isLoginModalOpen} transparent={true} animationType="fade">
         <View
@@ -117,7 +139,7 @@ export default function TabLayout() {
             backgroundColor: "rgba(0, 0, 0, 0.5)",
           }}
         >
-          <View style={{ backgroundColor: "white" }}>
+          <View style={{ backgroundColor: "white", height: 200 }}>
             <Text>Login Modal</Text>
             <TouchableOpacity onPress={closeLoginModal}>
               <Ionicons name="close" size={24} color="#555" />
