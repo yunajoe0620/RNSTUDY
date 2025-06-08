@@ -1,7 +1,44 @@
 import { Ionicons } from "@expo/vector-icons";
+import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useRouter } from "expo-router";
-import { useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+  Animated,
+  Modal,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+const AnimatedTabBarButton = ({
+  children,
+  onPress,
+  style,
+  ...restProps // rest 문법
+}: BottomTabBarButtonProps) => {
+  // console.log("children", children);
+  // console.log("style", style);
+  // console.log("restProps", restProps);
+  const scaleValue = useRef(new Animated.Value(1)).current;
+  const handlePressOut = () => {};
+  // Pressable이 TouchableOpacity보다 더 custom하기에 좋다
+  //  style={{ transform: [{ scale: scaleValue }] }}
+  return (
+    <Pressable
+      {...restProps} // spread문법
+      onPress={onPress}
+      onPressOut={handlePressOut}
+      style={[
+        { flex: 1, justifyContent: "center", alignItems: "center" },
+        style,
+      ]}
+      android_ripple={{ borderless: false, radius: 0 }}
+    >
+      <Animated.View>{children}</Animated.View>
+    </Pressable>
+  );
+};
 
 export default function TabLayout() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -17,7 +54,16 @@ export default function TabLayout() {
 
   return (
     <>
-      <Tabs backBehavior="history" screenOptions={{ headerShown: false }}>
+      <Tabs
+        backBehavior="history"
+        screenOptions={{
+          headerShown: false,
+          tabBarButton: (props) => {
+            console.log("PROPS입니다아", props);
+            return <AnimatedTabBarButton {...props}></AnimatedTabBarButton>;
+          },
+        }}
+      >
         <Tabs.Screen
           name="(home)"
           options={{

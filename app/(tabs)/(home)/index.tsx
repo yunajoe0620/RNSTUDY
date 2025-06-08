@@ -1,5 +1,6 @@
 // my-app://main
 // stack, tab, drawer
+import { BlurView } from "expo-blur";
 import { usePathname, useRouter } from "expo-router";
 import {
   Dimensions,
@@ -10,7 +11,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import BlurView from "./../../../node_modules/expo-blur/build/BlurView.d";
 
 export default function Index() {
   const router = useRouter();
@@ -18,9 +18,16 @@ export default function Index() {
   const insets = useSafeAreaInsets();
 
   const { width, height } = Dimensions.get("window");
+  // 미디어쿼리를 하려면은
+  // if(width <375){
 
-  console.log("pathname222 ===>", pathname, insets);
-  console.log("width", width, "height", height);
+  // }
+  // console.log(`화면 너비: ${width}dp, 높이:  ${height}dp`);
+  // console.log(
+  //   `화면 너비: ${width * PixelRatio.get()}px, 높이:  ${
+  //     height * PixelRatio.get()
+  //   }px`
+  // );
 
   return (
     <View
@@ -30,7 +37,7 @@ export default function Index() {
       ]}
     >
       <BlurView style={styles.header} intensity={70}>
-        <Image source={require("@/assets/images/react-ogo.png")}></Image>
+        <Image source={require("@/assets/images/react-logo.png")}></Image>
         <TouchableOpacity style={styles.loginButton}>
           <Text style={styles.loginButtonText}>로그인</Text>
         </TouchableOpacity>
@@ -81,6 +88,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    marginTop: 20,
     alignItems: "center",
   },
   headerLogo: {
@@ -99,6 +107,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   loginButtonText: {
-    color: "black",
+    color: "white",
   },
 });
