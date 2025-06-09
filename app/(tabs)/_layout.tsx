@@ -1,32 +1,62 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useRouter } from "expo-router";
-import { useRef, useState } from "react";
-import {
-  Animated,
-  Modal,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-
+import { useState } from "react";
+import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
+import Animated, {
+  Easing,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 const AnimatedTabBarButton = ({
   children,
   onPress,
   style,
   ...restProps // rest 문법
 }: BottomTabBarButtonProps) => {
-  // console.log("children", children);
-  // console.log("style", style);
-  // console.log("restProps", restProps);
-  const scaleValue = useRef(new Animated.Value(1)).current;
-  const handlePressOut = () => {};
+  const scale = useSharedValue<number>(0);
+  const ANGLE = 100;
+  const TIME = 100;
+  const EASING = Easing.elastic(1.5);
+  const handlePressOut = () => {
+    console.log("눌렀습니당");
+    scale.value = withSequence(
+      withTiming(-ANGLE, { duration: TIME / 2, easing: EASING }),
+      withRepeat(
+        withTiming(ANGLE, {
+          duration: TIME,
+          easing: EASING,
+        }),
+        7,
+        true
+      )
+    );
+    // withSpring(value, {
+    //   toValue: 2,
+    //   useNativeDriver: true,
+    //   friction: 4,
+    // });
+    // Animated.sequence([
+    //   Animated.spring(scaleValue, {
+    //     toValue: 2,
+    //     useNativeDriver: true,
+    //     friction: 4,
+    //   }),
+    //   Animated.spring(scaleValue, {
+    //     toValue: 1,
+    //     useNativeDriver: true,
+    //     speed: 100,
+    //     friction: 100,
+    //   }),
+    // ]).start();
+  };
   // Pressable이 TouchableOpacity보다 더 custom하기에 좋다
-  //  style={{ transform: [{ scale: scaleValue }] }}
+
   return (
     <Pressable
-      {...restProps} // spread문법
+      // {...restProps} // spread문법 에러가난다 음
       onPress={onPress}
       onPressOut={handlePressOut}
       style={[
@@ -59,7 +89,6 @@ export default function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarButton: (props) => {
-            console.log("PROPS입니다아", props);
             return <AnimatedTabBarButton {...props}></AnimatedTabBarButton>;
           },
         }}
@@ -77,7 +106,7 @@ export default function TabLayout() {
             ),
           }}
         />
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="index"
           options={{
             // 아이콘 아래에 title 안보이게 함
@@ -90,7 +119,7 @@ export default function TabLayout() {
               />
             ),
           }}
-        />
+        /> */}
         <Tabs.Screen
           name="search"
           options={{
