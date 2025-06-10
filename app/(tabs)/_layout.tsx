@@ -3,36 +3,39 @@ import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useRouter } from "expo-router";
 import { useState } from "react";
 import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
-import Animated, {
-  Easing,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
 const AnimatedTabBarButton = ({
   children,
   onPress,
   style,
   ...restProps // rest 문법
 }: BottomTabBarButtonProps) => {
-  const scale = useSharedValue<number>(0);
-  const ANGLE = 100;
-  const TIME = 100;
-  const EASING = Easing.elastic(1.5);
+  const test = useSharedValue<number>(0);
+
   const handlePressOut = () => {
-    console.log("눌렀습니당");
-    scale.value = withSequence(
-      withTiming(-ANGLE, { duration: TIME / 2, easing: EASING }),
-      withRepeat(
-        withTiming(ANGLE, {
-          duration: TIME,
-          easing: EASING,
-        }),
-        7,
-        true
-      )
-    );
+    test.value = withSpring(test.value + 50);
+
+    // scale.value += 100;
+    // scale.value = withSequence(
+    //   withSpring(scale.value, {
+    //     mass: 1,
+    //     damping: 10,
+    //     stiffness: 100,
+    //     overshootClamping: false,
+    //     restDisplacementThreshold: 0.01,
+    //     restSpeedThreshold: 10,
+    //     reduceMotion: ReduceMotion.System,
+    //   }),
+    //   withSpring(scale.value, {
+    //     mass: 1,
+    //     damping: 10,
+    //     stiffness: 100,
+    //     overshootClamping: false,
+    //     restDisplacementThreshold: 0.01,
+    //     restSpeedThreshold: 10,
+    //     reduceMotion: ReduceMotion.System,
+    //   })
+    // );
     // withSpring(value, {
     //   toValue: 2,
     //   useNativeDriver: true,
@@ -65,7 +68,9 @@ const AnimatedTabBarButton = ({
       ]}
       android_ripple={{ borderless: false, radius: 0 }}
     >
-      <Animated.View>{children}</Animated.View>
+      <Animated.View style={{ backgroundColor: "red", width: test }}>
+        {children}
+      </Animated.View>
     </Pressable>
   );
 };
