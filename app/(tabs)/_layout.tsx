@@ -3,59 +3,32 @@ import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useRouter } from "expo-router";
 import { useState } from "react";
 import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
-import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 const AnimatedTabBarButton = ({
   children,
   onPress,
   style,
   ...restProps // rest 문법
 }: BottomTabBarButtonProps) => {
-  const test = useSharedValue<number>(0);
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
 
   const handlePressOut = () => {
-    test.value = withSpring(test.value + 50);
-
-    // scale.value += 100;
-    // scale.value = withSequence(
-    //   withSpring(scale.value, {
-    //     mass: 1,
-    //     damping: 10,
-    //     stiffness: 100,
-    //     overshootClamping: false,
-    //     restDisplacementThreshold: 0.01,
-    //     restSpeedThreshold: 10,
-    //     reduceMotion: ReduceMotion.System,
-    //   }),
-    //   withSpring(scale.value, {
-    //     mass: 1,
-    //     damping: 10,
-    //     stiffness: 100,
-    //     overshootClamping: false,
-    //     restDisplacementThreshold: 0.01,
-    //     restSpeedThreshold: 10,
-    //     reduceMotion: ReduceMotion.System,
-    //   })
-    // );
-    // withSpring(value, {
-    //   toValue: 2,
-    //   useNativeDriver: true,
-    //   friction: 4,
-    // });
-    // Animated.sequence([
-    //   Animated.spring(scaleValue, {
-    //     toValue: 2,
-    //     useNativeDriver: true,
-    //     friction: 4,
-    //   }),
-    //   Animated.spring(scaleValue, {
-    //     toValue: 1,
-    //     useNativeDriver: true,
-    //     speed: 100,
-    //     friction: 100,
-    //   }),
-    // ]).start();
+    scale.value = withSpring(1.2, { stiffness: 200 }, (finished) => {
+      if (finished) {
+        scale.value = withSpring(1, { stiffness: 200 });
+      }
+    });
   };
-  // Pressable이 TouchableOpacity보다 더 custom하기에 좋다
 
   return (
     <Pressable
@@ -68,9 +41,7 @@ const AnimatedTabBarButton = ({
       ]}
       android_ripple={{ borderless: false, radius: 0 }}
     >
-      <Animated.View style={{ backgroundColor: "red", width: test }}>
-        {children}
-      </Animated.View>
+      <Animated.View style={[animatedStyle]}>{children}</Animated.View>
     </Pressable>
   );
 };
@@ -111,20 +82,7 @@ export default function TabLayout() {
             ),
           }}
         />
-        {/* <Tabs.Screen
-          name="index"
-          options={{
-            // 아이콘 아래에 title 안보이게 함
-            tabBarLabel: () => null,
-            tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name="home"
-                size={24}
-                color={focused ? "black" : "gray"}
-              />
-            ),
-          }}
-        /> */}
+
         <Tabs.Screen
           name="search"
           options={{
