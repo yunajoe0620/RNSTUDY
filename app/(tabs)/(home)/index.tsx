@@ -1,5 +1,6 @@
 // my-app://main
 // stack, tab, drawer
+import { BlurView } from "expo-blur";
 import { usePathname, useRouter } from "expo-router";
 import {
   Dimensions,
@@ -10,7 +11,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import BlurView from "./../../../node_modules/expo-blur/build/BlurView.d";
 
 export default function Index() {
   const router = useRouter();
@@ -19,9 +19,16 @@ export default function Index() {
   const isLoggin = false;
 
   const { width, height } = Dimensions.get("window");
+  // 미디어쿼리를 하려면은
+  // if(width <375){
 
-  console.log("pathname222 ===>", pathname, insets);
-  console.log("width", width, "height", height);
+  // }
+  // console.log(`화면 너비: ${width}dp, 높이:  ${height}dp`);
+  // console.log(
+  //   `화면 너비: ${width * PixelRatio.get()}px, 높이:  ${
+  //     height * PixelRatio.get()
+  //   }px`
+  // );
 
   return (
     <View
@@ -30,33 +37,28 @@ export default function Index() {
         { paddingTop: insets.top, paddingBottom: insets.bottom },
       ]}
     >
-      {!isLoggin && (
-        <BlurView style={styles.header} intensity={70}>
-          <Image source={require("@/assets/images/react-logo.png")}></Image>
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>로그인</Text>
+      <BlurView style={styles.header} intensity={70}>
+        <Image source={require("@/assets/images/react-logo.png")}></Image>
+        <TouchableOpacity style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>로그인</Text>
+        </TouchableOpacity>
+      </BlurView>
+      <View style={styles.tabContainer}>
+        <View style={styles.tab}>
+          <TouchableOpacity onPress={() => router.push(`/`)}>
+            <Text style={{ color: pathname === "/" ? "red" : "black" }}>
+              For You
+            </Text>
           </TouchableOpacity>
-        </BlurView>
-      )}
-      {isLoggin && (
-        <View style={styles.tabContainer}>
-          <View style={styles.tab}>
-            <TouchableOpacity onPress={() => router.push(`/`)}>
-              <Text style={{ color: pathname === "/" ? "red" : "black" }}>
-                For You
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.tab}>
-            <TouchableOpacity onPress={() => router.push(`/following`)}>
-              <Text style={{ color: pathname === "/" ? "black" : "red" }}>
-                For following
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
-      )}
-
+      </View>
+      <View style={styles.tab}>
+        <TouchableOpacity onPress={() => router.push(`/following`)}>
+          <Text style={{ color: pathname === "/" ? "black" : "red" }}>
+            For following
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View>
         <TouchableOpacity onPress={() => router.push(`/@my-app/post/1`)}>
           <Text>게시글1</Text>
@@ -87,6 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    marginTop: 20,
     alignItems: "center",
   },
   headerLogo: {
@@ -105,6 +108,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   loginButtonText: {
-    color: "black",
+    color: "white",
   },
 });

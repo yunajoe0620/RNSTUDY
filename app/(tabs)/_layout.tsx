@@ -1,7 +1,79 @@
 import { Ionicons } from "@expo/vector-icons";
+import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useRouter } from "expo-router";
 import { useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
+import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
+const AnimatedTabBarButton = ({
+  children,
+  onPress,
+  style,
+  ...restProps // rest 문법
+}: BottomTabBarButtonProps) => {
+  const test = useSharedValue<number>(0);
+
+  const handlePressOut = () => {
+    test.value = withSpring(test.value + 50);
+
+    // scale.value += 100;
+    // scale.value = withSequence(
+    //   withSpring(scale.value, {
+    //     mass: 1,
+    //     damping: 10,
+    //     stiffness: 100,
+    //     overshootClamping: false,
+    //     restDisplacementThreshold: 0.01,
+    //     restSpeedThreshold: 10,
+    //     reduceMotion: ReduceMotion.System,
+    //   }),
+    //   withSpring(scale.value, {
+    //     mass: 1,
+    //     damping: 10,
+    //     stiffness: 100,
+    //     overshootClamping: false,
+    //     restDisplacementThreshold: 0.01,
+    //     restSpeedThreshold: 10,
+    //     reduceMotion: ReduceMotion.System,
+    //   })
+    // );
+    // withSpring(value, {
+    //   toValue: 2,
+    //   useNativeDriver: true,
+    //   friction: 4,
+    // });
+    // Animated.sequence([
+    //   Animated.spring(scaleValue, {
+    //     toValue: 2,
+    //     useNativeDriver: true,
+    //     friction: 4,
+    //   }),
+    //   Animated.spring(scaleValue, {
+    //     toValue: 1,
+    //     useNativeDriver: true,
+    //     speed: 100,
+    //     friction: 100,
+    //   }),
+    // ]).start();
+  };
+  // Pressable이 TouchableOpacity보다 더 custom하기에 좋다
+
+  return (
+    <Pressable
+      // {...restProps} // spread문법 에러가난다 음
+      onPress={onPress}
+      onPressOut={handlePressOut}
+      style={[
+        { flex: 1, justifyContent: "center", alignItems: "center" },
+        style,
+      ]}
+      android_ripple={{ borderless: false, radius: 0 }}
+    >
+      <Animated.View style={{ backgroundColor: "red", width: test }}>
+        {children}
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 export default function TabLayout() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -17,7 +89,15 @@ export default function TabLayout() {
 
   return (
     <>
-      <Tabs backBehavior="history" screenOptions={{ headerShown: false }}>
+      <Tabs
+        backBehavior="history"
+        screenOptions={{
+          headerShown: false,
+          tabBarButton: (props) => {
+            return <AnimatedTabBarButton {...props}></AnimatedTabBarButton>;
+          },
+        }}
+      >
         <Tabs.Screen
           name="(home)"
           options={{
@@ -31,7 +111,7 @@ export default function TabLayout() {
             ),
           }}
         />
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="index"
           options={{
             // 아이콘 아래에 title 안보이게 함
@@ -44,7 +124,7 @@ export default function TabLayout() {
               />
             ),
           }}
-        />
+        /> */}
         <Tabs.Screen
           name="search"
           options={{
