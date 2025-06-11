@@ -32,11 +32,12 @@ export function ListFooter({
   canAddThread: boolean;
   addThread: () => void;
 }) {
+  console.log("뚜레두를 add할 수 있는건가유?", canAddThread);
   return (
     <View style={styles.listFooter}>
       <View style={styles.listFooterAvatar}>
         <Image
-          source={require("@/assets/images/react-logo.png")}
+          source={require("@/assets/images/avatar.png")}
           style={styles.avatarSmall}
         />
       </View>
@@ -46,115 +47,6 @@ export function ListFooter({
             Add to thread
           </Text>
         </Pressable>
-      </View>
-    </View>
-  );
-}
-export function renderThreadItem({
-  item,
-  index,
-}: {
-  item: Thread;
-  index: number;
-}) {
-  const [isPosting, setIsPosting] = useState(false);
-
-  const updateThreadText = (id: string, text: string) => {};
-
-  return (
-    <View style={styles.threadContainer}>
-      <View style={styles.avatarContainer}>
-        <Image
-          source={require("@/assets/images/avatar.png")}
-          style={styles.avatar}
-        />
-        <View style={styles.threadLine} />
-      </View>
-      <View style={styles.contentContainer}>
-        <View style={styles.userInfoContainer}>
-          <Text
-            style={[
-              styles.username,
-              // colorScheme === "dark"
-              //   ? styles.usernameDark
-              //   : styles.usernameLight,
-            ]}
-          >
-            zerohch0
-          </Text>
-          {index > 0 && (
-            <TouchableOpacity
-              onPress={() => {}}
-              style={styles.removeButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Ionicons name="close-outline" size={20} color="#8e8e93" />
-            </TouchableOpacity>
-          )}
-        </View>
-        <TextInput
-          style={[
-            styles.input,
-            // colorScheme === "dark" ? styles.inputDark : styles.inputLight,
-          ]}
-          placeholder={"What's new?"}
-          placeholderTextColor="#999"
-          value={item.text}
-          onChangeText={(text) => updateThreadText(item.id, text)}
-          multiline
-        />
-        {item.imageUrls && item.imageUrls.length > 0 && (
-          <FlatList
-            data={item.imageUrls}
-            renderItem={({ item: uri, index: imgIndex }) => (
-              <View style={styles.imagePreviewContainer}>
-                <Image source={{ uri }} style={styles.imagePreview} />
-                <TouchableOpacity
-                  onPress={
-                    () => {}
-                    // !isPosting && removeImageFromThread(item.id, uri)
-                  }
-                  style={styles.removeImageButton}
-                >
-                  <Ionicons
-                    name="close-circle"
-                    size={20}
-                    color="rgba(0,0,0,0.7)"
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-            keyExtractor={(uri, imgIndex) =>
-              `${item.id}-img-${imgIndex}-${uri}`
-            }
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.imageFlatList}
-          />
-        )}
-        {item.location && (
-          <View style={styles.locationContainer}>
-            <Text style={styles.locationText}>
-              {item.location[0]}, {item.location[1]}
-            </Text>
-          </View>
-        )}
-        <View style={styles.actionButtons}>
-          <Pressable style={styles.actionButton} onPress={() => {}}>
-            <Ionicons name="image-outline" size={24} color="#777" />
-          </Pressable>
-          <Pressable style={styles.actionButton} onPress={() => {}}>
-            <Ionicons name="camera-outline" size={24} color="#777" />
-          </Pressable>
-          <Pressable
-            style={styles.actionButton}
-            onPress={() => {
-              // getMyLocation(item.id);
-            }}
-          >
-            <FontAwesome name="map-marker" size={24} color="#777" />
-          </Pressable>
-        </View>
       </View>
     </View>
   );
@@ -178,6 +70,26 @@ function Modal() {
   const insets = useSafeAreaInsets();
   const handleCancel = () => {};
   const handlePost = () => {};
+  const deleteThread = (id: string) => {
+    console.log("선택한 아이디 입니다앙", id, "Array입니다앙아", threads);
+
+    // 해당 id에 관한 thread array에서 삭제하여 filtering한다
+    const result = threads.filter((thread) => thread.id !== id);
+    setThreads(result);
+  };
+
+  const updateThreadText = (id: string, newText: string) => {
+    setThreads((prevThread) =>
+      prevThread.map((thread) =>
+        thread.id === id
+          ? {
+              ...thread,
+              text: newText,
+            }
+          : thread
+      )
+    );
+  };
   const getMyLocation = async (id: string) => {
     // ForeGroundLocation 권한 받기
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -225,8 +137,115 @@ function Modal() {
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
   };
-  const canAddThread = (threads.at(-1)?.text.trim().length ?? 0) > 0;
 
+  const canAddThread = (threads.at(-1)?.text.trim().length ?? 0) > 0; // post의 마지막 글의 length를 return한다
+  const renderThreadItem = ({
+    item,
+    index,
+  }: {
+    item: Thread;
+    index: number;
+  }) => {
+    return (
+      <View style={styles.threadContainer}>
+        <View style={styles.avatarContainer}>
+          <Image
+            source={require("@/assets/images/avatar.png")}
+            style={styles.avatar}
+          />
+          <View style={styles.threadLine} />
+        </View>
+        <View style={styles.contentContainer}>
+          <View style={styles.userInfoContainer}>
+            <Text
+              style={[
+                styles.username,
+                // colorScheme === "dark"
+                //   ? styles.usernameDark
+                //   : styles.usernameLight,
+              ]}
+            >
+              YUNAJOEY
+            </Text>
+            {index > 0 && (
+              <TouchableOpacity
+                onPress={() => deleteThread(item.id)}
+                style={styles.removeButton}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Ionicons name="close-outline" size={20} color="#cc0404" />
+              </TouchableOpacity>
+            )}
+          </View>
+          <TextInput
+            style={[
+              styles.input,
+              // colorScheme === "dark" ? styles.inputDark : styles.inputLight,
+            ]}
+            placeholder={"What's new?"}
+            placeholderTextColor="#999"
+            value={item.text}
+            onChangeText={(text) => updateThreadText(item.id, text)}
+            multiline
+          />
+          {item.imageUrls && item.imageUrls.length > 0 && (
+            <FlatList
+              data={item.imageUrls}
+              renderItem={({ item: uri, index: imgIndex }) => (
+                <View style={styles.imagePreviewContainer}>
+                  <Image source={{ uri }} style={styles.imagePreview} />
+                  <TouchableOpacity
+                    onPress={
+                      () => {}
+                      // !isPosting && removeImageFromThread(item.id, uri)
+                    }
+                    style={styles.removeImageButton}
+                  >
+                    <Ionicons
+                      name="close-circle"
+                      size={20}
+                      color="rgba(0,0,0,0.7)"
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+              keyExtractor={(uri, imgIndex) =>
+                `${item.id}-img-${imgIndex}-${uri}`
+              }
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.imageFlatList}
+            />
+          )}
+
+          {/* 아이템 로케이션 있을때 */}
+          {item.location && (
+            <View style={styles.locationContainer}>
+              <Text style={styles.locationText}>
+                {item.location[0]}, {item.location[1]}
+              </Text>
+            </View>
+          )}
+          <View style={styles.actionButtons}>
+            <Pressable style={styles.actionButton} onPress={() => {}}>
+              <Ionicons name="image-outline" size={24} color="#777" />
+            </Pressable>
+            <Pressable style={styles.actionButton} onPress={() => {}}>
+              <Ionicons name="camera-outline" size={24} color="#777" />
+            </Pressable>
+            <Pressable
+              style={styles.actionButton}
+              onPress={() => {
+                // getMyLocation(item.id);
+              }}
+            >
+              <FontAwesome name="map-marker" size={24} color="#777" />
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    );
+  };
   return (
     <View style={[styles.contentContainer, { paddingTop: insets.top }]}>
       {/* header */}
@@ -237,7 +256,7 @@ function Modal() {
         <Text style={styles.title}>New thread</Text>
         <View style={styles.headerRightPlaceholder}></View>
       </View>
-      {/* 
+
       <FlatList
         data={threads}
         keyExtractor={(item) => item.id}
@@ -261,7 +280,7 @@ function Modal() {
         }
         contentContainerStyle={{ backgroundColor: "#ddd" }}
         keyboardShouldPersistTaps="handled"
-      ></FlatList> */}
+      ></FlatList>
 
       {/* footer */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 10 }]}>
