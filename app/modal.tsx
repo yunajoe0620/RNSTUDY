@@ -1,6 +1,15 @@
+import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface Thread {
   id: string;
@@ -10,47 +19,120 @@ interface Thread {
   imageUris: string[];
 }
 
+export function ListFooter({
+  canAddThread,
+  addThread,
+}: {
+  canAddThread: boolean;
+  addThread: () => void;
+}) {
+  return (
+    <View style={styles.listFooter}>
+      <View style={styles.listFooterAvatar}>
+        <Image
+          source={require("@/assets/images/react-logo.png")}
+          style={styles.avatarSmall}
+        />
+      </View>
+      <View>
+        <Pressable onPress={addThread} style={[styles.input]}>
+          <Text style={{ color: canAddThread ? "#999" : "#aaa" }}>
+            Add to thread
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+export function renderThreadItem({}) {
+  return (
+    <View style={styles.threadContainer}>
+      <View style={styles.avatarContainer}>
+        <Image
+          source={require("@/assets/images/react-logo.png")}
+          style={styles.avatar}
+        />
+        <View style={styles.threadLine} />
+        <View style={styles.contentContainer}></View>
+      </View>
+    </View>
+  );
+}
+
 function Modal() {
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
   const [threads, setThreads] = useState<Thread[]>([
     { id: Date.now().toString(), text: "", imageUris: [] },
   ]);
-  const [isPosting, setIsPosting] = useState(false);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const replyOptions = ["Anyone", "Profiles you follow", "Mentioned only"];
+
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const handleCancel = () => {};
   const handlePost = () => {};
+  const getMyLocation = async () => {
+    // ForeGroundLocation 권한 받기
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    // BackgroundLocation 권한 받기
+    //   Location.requestBackgroundPermissionsAsync
+    if (status !== "granted") {
+      try {
+      } catch (error) {}
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  };
+  const canAddThread = (threads.at(-1)?.text.trim().length ?? 0) > 0;
+
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.contentContainer, { paddingTop: insets.top }]}>
+      {/* header */}
       <View style={styles.header}>
-        <Pressable onPress={handleCancel} disabled={isPosting}>
-          <Text style={[styles.cancel, isPosting && styles.disabledText]}>
-            Cancel
-          </Text>
+        <Pressable onPress={handleCancel}>
+          <Text style={[styles.cancel]}>Cancel</Text>
         </Pressable>
-        <Text style={styles.title}>New Thread</Text>
+        <Text style={styles.title}>New thread</Text>
         <View style={styles.headerRightPlaceholder}></View>
       </View>
-      {/* <FlatList
+
+      <FlatList
         data={threads}
         keyExtractor={(item) => item.id}
-        // renderItem={renderThreadItem}
-        // ListFooterComponent={ListFooter}
         style={styles.list}
+        renderItem={renderThreadItem}
+        ListFooterComponent={
+          <ListFooter
+            canAddThread={canAddThread}
+            // TODO:thread를 추가하는 펑션
+            addThread={() => {}}
+          ></ListFooter>
+        }
+        contentContainerStyle={{ backgroundColor: "#ddd" }}
         keyboardShouldPersistTaps="handled"
-        contentInset={{}}
-      ></FlatList> */}
+      ></FlatList>
+
+      {/* footer */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 10 }]}>
         <Pressable onPress={() => setIsDropdownVisible(true)}>
-          <Text style={styles.footerText}>can reply & quote </Text>
+          <Text style={[styles.footerText]}>
+            {replyOptions}can reply & quote
+          </Text>
         </Pressable>
         <Pressable
           style={[styles.postButton, styles.postButtonDisabled]}
-          disabled={isPosting}
           onPress={handlePost}
+          disabled={isPosting}
         >
-          <Text style={styles.postButtonText}>POST</Text>
+          <Text style={[styles.cancel]}>Post</Text>
         </Pressable>
       </View>
     </View>
