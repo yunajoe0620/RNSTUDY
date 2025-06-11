@@ -1,6 +1,15 @@
+import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface Thread {
   id: string;
@@ -10,10 +19,45 @@ interface Thread {
   imageUris: string[];
 }
 
-export function ListFooter({}) {
-  return <></>;
+export function ListFooter({
+  canAddThread,
+  addThread,
+}: {
+  canAddThread: boolean;
+  addThread: () => void;
+}) {
+  return (
+    <View style={styles.listFooter}>
+      <View style={styles.listFooterAvatar}>
+        <Image
+          source={require("@/assets/images/react-logo.png")}
+          style={styles.avatarSmall}
+        />
+      </View>
+      <View>
+        <Pressable onPress={addThread} style={[styles.input]}>
+          <Text style={{ color: canAddThread ? "#999" : "#aaa" }}>
+            Add to thread
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
 }
-export function renderThreadItem({}) {}
+export function renderThreadItem({}) {
+  return (
+    <View style={styles.threadContainer}>
+      <View style={styles.avatarContainer}>
+        <Image
+          source={require("@/assets/images/react-logo.png")}
+          style={styles.avatar}
+        />
+        <View style={styles.threadLine} />
+        <View style={styles.contentContainer}></View>
+      </View>
+    </View>
+  );
+}
 
 function Modal() {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -21,12 +65,34 @@ function Modal() {
   const [threads, setThreads] = useState<Thread[]>([
     { id: Date.now().toString(), text: "", imageUris: [] },
   ]);
+
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const replyOptions = ["Anyone", "Profiles you follow", "Mentioned only"];
 
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const handleCancel = () => {};
   const handlePost = () => {};
+  const getMyLocation = async () => {
+    // ForeGroundLocation 권한 받기
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    // BackgroundLocation 권한 받기
+    //   Location.requestBackgroundPermissionsAsync
+    if (status !== "granted") {
+      try {
+      } catch (error) {}
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  };
+  const canAddThread = (threads.at(-1)?.text.trim().length ?? 0) > 0;
+
   return (
     <View style={[styles.contentContainer, { paddingTop: insets.top }]}>
       {/* header */}
@@ -43,8 +109,14 @@ function Modal() {
         keyExtractor={(item) => item.id}
         style={styles.list}
         renderItem={renderThreadItem}
-        ListFooterComponent={ListFooter}
-        contentContainerStyle={{}}
+        ListFooterComponent={
+          <ListFooter
+            canAddThread={canAddThread}
+            // TODO:thread를 추가하는 펑션
+            addThread={() => {}}
+          ></ListFooter>
+        }
+        contentContainerStyle={{ backgroundColor: "#ddd" }}
         keyboardShouldPersistTaps="handled"
       ></FlatList>
 
