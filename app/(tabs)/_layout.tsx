@@ -14,8 +14,6 @@ const AnimatedTabBarButton = ({
 
   const handlePressOut = () => {
     test.value = withSpring(test.value + 50);
-
-    // scale.value += 100;
     // scale.value = withSequence(
     //   withSpring(scale.value, {
     //     mass: 1,
@@ -68,9 +66,7 @@ const AnimatedTabBarButton = ({
       ]}
       android_ripple={{ borderless: false, radius: 0 }}
     >
-      <Animated.View style={{ backgroundColor: "red", width: test }}>
-        {children}
-      </Animated.View>
+      <Animated.View style={{ width: test }}>{children}</Animated.View>
     </Pressable>
   );
 };
