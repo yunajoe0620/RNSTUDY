@@ -93,49 +93,38 @@ function Modal() {
   const getMyLocation = async (id: string) => {
     // ForeGroundLocation 권한 받기
     let { status } = await Location.requestForegroundPermissionsAsync();
-    // BackgroundLocation 권한 받기
+    console.log("status", status);
+    // BackgroundLocation 권한 받기 (복잡하다)
     //   Location.requestBackgroundPermissionsAsync
     if (status !== "granted") {
-      try {
-        await Location.getForegroundPermissionsAsync();
-      } catch (error) {
-        console.error(error);
-        await Linking.openSettings();
-        Alert.alert(
-          "Location Permission not granted",
-          "Please grant locatin permission to",
-          [
-            {
-              text: "Open Settings",
-              onPress: () => {
-                Linking.openSettings();
-              },
+      Alert.alert(
+        "Location Permission not granted",
+        "Please grant locatin permission to",
+        [
+          {
+            text: "Open Settings",
+            onPress: () => {
+              Linking.openSettings();
             },
-            {
-              text: "Cancel",
-            },
-          ]
-        );
-        return;
-      }
-
-      const location = await Location.getCurrentPositionAsync({});
-      setThreads((prevThreads) =>
-        prevThreads.map((thread) =>
-          thread.id === id
-            ? {
-                ...thread,
-                location: [location.coords.latitude, location.coords.longitude],
-              }
-            : thread
-        )
+          },
+          {
+            text: "Cancel",
+          },
+        ]
       );
-
       return;
     }
 
     let location = await Location.getCurrentPositionAsync({});
+    const address = await Location.reverseGeocodeAsync({
+      latitude: location.coords.latitude, // 37.5
+      longitude: location.coords.longitude, // 127.02
+    });
     setLocation(location);
+    // Location.watchPositionAsync(options, callback, errorHandler) 움직일때마다 position을 얻는다 백그라운드에서는 X
+    // Location.startGeofencingAsync(taskName, regions) 특정 범위안에 들어올떄 이벤트 시이작
+    // Location.geocodeAsync(address) 주소를 위,경도로 변환
+    //  Location.reverseGeocodeAsync(location) 위, 경도를 주소
   };
 
   const canAddThread = (threads.at(-1)?.text.trim().length ?? 0) > 0; // post의 마지막 글의 length를 return한다
@@ -222,7 +211,7 @@ function Modal() {
           {item.location && (
             <View style={styles.locationContainer}>
               <Text style={styles.locationText}>
-                {item.location[0]}, {item.location[1]}
+                내가 있는 위치이~{item.location[0]}, {item.location[1]}
               </Text>
             </View>
           )}
@@ -236,7 +225,7 @@ function Modal() {
             <Pressable
               style={styles.actionButton}
               onPress={() => {
-                // getMyLocation(item.id);
+                getMyLocation(item.id);
               }}
             >
               <FontAwesome name="map-marker" size={24} color="#777" />
